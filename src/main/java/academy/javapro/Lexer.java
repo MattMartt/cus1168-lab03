@@ -27,20 +27,21 @@ public class Lexer {
     private int position;
 
     /**
-     * TODO: Initialize the lexer with the input string
-     * 1. Store the input string in the 'input' field
-     * 2. Initialize the tokens list as a new ArrayList
-     * 3. Set the initial position to 0
+     * Initialize the lexer with the input string  
+     * and Instance variables
+     * Set the initial position to 0
      *
      * @param input The source code string to be tokenized
      */
     public Lexer(String input) {
         // Your code here
+        this.input = input;
+        this.tokens = new ArrayList<>();
+        this.position = 0;
     }
 
     /**
-     * TODO: Process the input string and break it into tokens
-     * Steps to implement:
+     * Process the input string and break it into tokens
      * 1. Create a while loop that continues while position < input.length()
      * 2. Get the remaining input using substring(position)
      * 3. Try to match each pattern in PATTERNS array:
@@ -54,10 +55,29 @@ public class Lexer {
      */
     public void tokenize() {
         // Your code here
+        while(position < input.length()) {
+            String remainingInput = input.substring(position);
+            boolean matchFound = false;
+            for (int i = 0; i < PATTERNS.length; i++) {
+                Matcher matcher = PATTERNS[i].matcher(remainingInput);
+                if (matcher.lookingAt()) {
+                    String match = matcher.group();
+                    if (i != 0) {
+                        tokens.add(new String[]{TYPES[i], match});
+                    }
+                    position += match.length();
+                    matchFound = true;
+                    break;
+                }
+            }
+            if (!matchFound) {
+                throw new RuntimeException("Invalid input at position: " + position);
+            }
+        }
     }
 
     /**
-     * TODO: Return the list of tokens
+     * Return the list of tokens
      * 1. Return the tokens list containing all found tokens
      * 2. Each token should be a String array with two elements:
      *    - First element: Token type (from TYPES array)
@@ -67,8 +87,9 @@ public class Lexer {
      */
     public List<String[]> getTokens() {
         // Your code here
-        return null;
+        return tokens;
     }
+        
 
     public static void main(String[] args) {
         String code = "int x = 10; if (x > 5) { x = x + 1; }";
